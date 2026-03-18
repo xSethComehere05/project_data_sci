@@ -1,0 +1,21 @@
+{
+  "model_type": "RandomForestClassifier",
+  "accuracy": 0.7403,
+  "n_features": 8,
+  "feature_names": [
+    "Pregnancies",
+    "Glucose",
+    "BloodPressure",
+    "SkinThickness",
+    "Insulin",
+    "BMI",
+    "DiabetesPedigreeFunction",
+    "Age"
+  ],
+  "target_names": [
+    "ไม่เป็นเบาหวาน (0)",
+    "เป็นเบาหวาน (1)"
+  ],
+  "training_samples": 614,
+  "test_samples": 154
+}
