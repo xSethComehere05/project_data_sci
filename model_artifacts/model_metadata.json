@@ -1,21 +1,25 @@
 {
-  "model_type": "RandomForestClassifier",
-  "accuracy": 0.7403,
-  "n_features": 8,
+  "model_type": "RidgeRegression",
+  "r2_score": 0.8625,
+  "rmse": 0.1102,
+  "n_features": 6,
   "feature_names": [
-    "Pregnancies",
-    "Glucose",
-    "BloodPressure",
-    "SkinThickness",
-    "Insulin",
-    "BMI",
-    "DiabetesPedigreeFunction",
-    "Age"
+    "study_hours",
+    "attendance",
+    "sleep_hours",
+    "procrastination_score",
+    "screen_time",
+    "stress"
   ],
-  "target_names": [
-    "ไม่เป็นเบาหวาน (0)",
-    "เป็นเบาหวาน (1)"
-  ],
-  "training_samples": 614,
-  "test_samples": 154
+  "target_name": "GPA (0.0 - 4.0 Scale)",
+  "training_samples": 80000,
+  "test_samples": 20000,
+  "coefficients": {
+    "study_hours": 0.07291661185758584,
+    "attendance": 0.008911923246268093,
+    "sleep_hours": 0.14372585872320526,
+    "procrastination_score": -0.010140221862293974,
+    "screen_time": 0.004832292001181078,
+    "stress": -0.06377562719498603
+  }
 }
