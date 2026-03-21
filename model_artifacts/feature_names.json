@@ -1,1 +1,19 @@
-["study_hours", "attendance", "sleep_hours", "procrastination_score", "screen_time", "stress"]
+{
+  "features": [
+    "study_hours",
+    "attendance",
+    "stress",
+    "anxiety",
+    "social_media_hours",
+    "online_courses_completed",
+    "part_time_hours",
+    "extracurricular_hours"
+  ],
+  "target": "gpa_10",
+  "target_range": [0, 10],
+  "performance_level_map": {
+    "0": "Low (0-4)",
+    "1": "Medium (4-7)",
+    "2": "High (7-10)"
+  }
+}

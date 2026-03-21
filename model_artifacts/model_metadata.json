@@ -1,25 +1,47 @@
 {
-  "model_type": "RidgeRegression",
-  "r2_score": 0.8625,
-  "rmse": 0.1102,
-  "n_features": 6,
-  "feature_names": [
-    "study_hours",
-    "attendance",
-    "sleep_hours",
-    "procrastination_score",
-    "screen_time",
-    "stress"
-  ],
-  "target_name": "GPA (0.0 - 4.0 Scale)",
-  "training_samples": 80000,
-  "test_samples": 20000,
-  "coefficients": {
-    "study_hours": 0.07291661185758584,
-    "attendance": 0.008911923246268093,
-    "sleep_hours": 0.14372585872320526,
-    "procrastination_score": -0.010140221862293974,
-    "screen_time": 0.004832292001181078,
-    "stress": -0.06377562719498603
-  }
+  "model_name": "student_gpa_best_model",
+  "model_type": "LightGBM",
+  "version": "1.0.0",
+  "file": "student_gpa_best_model.pkl",
+  "created_at": "2026-03-21T23:05:42.163694",
+  "dataset": "college-students-habits-and-performance",
+  "n_features": 8,
+  "feature_selection_method": "Stepwise Wrapper (SFS)",
+  "performance": {
+    "r2_score": 0.8852,
+    "rmse": 0.5011,
+    "mae": 0.3997
+  },
+  "all_models_comparison": [
+    {
+      "Model": "LightGBM",
+      "R²": 0.8852,
+      "RMSE": 0.5011,
+      "MAE": 0.3997
+    },
+    {
+      "Model": "XGBoost",
+      "R²": 0.8852,
+      "RMSE": 0.5011,
+      "MAE": 0.3996
+    },
+    {
+      "Model": "Ridge Regression",
+      "R²": 0.8835,
+      "RMSE": 0.5049,
+      "MAE": 0.4024
+    },
+    {
+      "Model": "Linear Regression",
+      "R²": 0.8825,
+      "RMSE": 0.507,
+      "MAE": 0.4041
+    },
+    {
+      "Model": "Random Forest",
+      "R²": 0.8822,
+      "RMSE": 0.5077,
+      "MAE": 0.4048
+    }
+  ]
 }
