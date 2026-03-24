@@ -159,7 +159,6 @@ with tab1:
             <div style='background:{bg};border:2px solid {color};border-radius:12px;padding:20px;text-align:center'>
               <div style='font-size:40px;margin-bottom:8px'>{"🔴" if pred_class==0 else "🟡" if pred_class==1 else "🟢"}</div>
               <div style='font-size:24px;font-weight:700;color:{color}'>{label}</div>
-              <div style='font-size:18px;font-weight:bold;color:#333;margin-top:5px'>GPA: {raw_score:.2f}</div>
               <div style='font-size:13px;color:#555;'>Performance Level</div>
             </div>""", unsafe_allow_html=True)
 
@@ -175,8 +174,9 @@ with tab1:
                 plt.close()
             else:
                 # เอากล่องสีฟ้าออกแล้ว: แสดงเฉพาะเส้นคั่นและค่าดิบแบบเรียบง่าย
-                st.markdown("<br><br>", unsafe_allow_html=True)
-                st.write(f"**Raw Model Output:** {raw_score:.4f}")
+                # st.markdown("<br><br>", unsafe_allow_html=True)
+                # st.write(f"**Raw Model Output:** {raw_score:.4f}")
+                pass
 
         # ── Suggestions ──────────────────
         st.markdown("---")
