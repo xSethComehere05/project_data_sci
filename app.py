@@ -91,7 +91,7 @@ with st.sidebar:
     st.markdown("---")
     st.subheader("📋 Model Info")
     st.write(f"**Model:** {METADATA.get('model_type', 'Best Model')}")
-    st.write(f"**Task:** Regression -> Classification")
+    st.write(f"**Task:** Classification")
     if PERF.get('accuracy') is not None:
         st.metric("Accuracy",  f"{PERF['accuracy']:.4f}")
     st.markdown("---")
