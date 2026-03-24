@@ -10,12 +10,20 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
 # ============================================================
+# 1. Page Config (ต้องเป็นคำสั่ง st. แรกสุดเสมอ!)
+# ============================================================
+st.set_page_config(
+    page_title="Student Performance Classifier",
+    page_icon="🎓",
+    layout="wide"
+)
+
+# ============================================================
 # Logging
 # ============================================================
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s  %(levelname)-8s  %(message)s',
-    handlers=[logging.FileHandler('student_gpa_service.log')]
+    format='%(asctime)s  %(levelname)-8s  %(message)s'
 )
 logger = logging.getLogger(__name__)
 
@@ -47,7 +55,7 @@ CLASS_COLORS = {0: '#EF4444', 1: '#F59E0B', 2: '#22C55E'}
 CLASS_BG     = {0: '#FEE2E2', 1: '#FEF3C7', 2: '#DCFCE7'}
 
 # ============================================================
-# Helper: Predict & Categorize (Regression Style)
+# Helper: Predict & Categorize (รองรับ 0-4, 4-7, 7-10)
 # ============================================================
 def predict_class(input_dict: dict):
     row = pd.DataFrame([input_dict])[FEATURES].astype('float32')
@@ -57,7 +65,7 @@ def predict_class(input_dict: dict):
     # 1. ทำนายค่า GPA (Regression)
     raw_score = float(model.predict(row)[0])
     
-    # 2. ตัดเกรดตามช่วงคะแนน 0-4, 4-7, 7-10
+    # 2. ตัดเกรดตามช่วงคะแนนที่คุณระบุ
     if raw_score < 4:
         pred_class, label = 0, 'Low'
     elif raw_score < 7:
@@ -68,21 +76,12 @@ def predict_class(input_dict: dict):
     color = CLASS_COLORS[pred_class]
     bg    = CLASS_BG[pred_class]
 
-    # ตรวจสอบ Probability (ถ้ามี)
+    # ตรวจสอบ Probability (ถ้า Model รองรับ)
     proba = None
     if hasattr(model, 'predict_proba'):
         proba = model.predict_proba(row)[0]
 
     return pred_class, label, color, bg, proba, raw_score
-
-# ============================================================
-# Page config
-# ============================================================
-st.set_page_config(
-    page_title="Student Performance Classifier",
-    page_icon="🎓",
-    layout="wide"
-)
 
 # ============================================================
 # Sidebar
@@ -93,7 +92,6 @@ with st.sidebar:
     st.subheader("📋 Model Info")
     st.write(f"**Model:** {METADATA.get('model_type', 'Best Model')}")
     st.write(f"**Task:** Regression -> Classification")
-    st.write(f"**Version:** {METADATA.get('version', '1.0.0')}")
     if PERF.get('accuracy') is not None:
         st.metric("Accuracy",  f"{PERF['accuracy']:.4f}")
     st.markdown("---")
@@ -161,12 +159,13 @@ with tab1:
             <div style='background:{bg};border:2px solid {color};border-radius:12px;padding:20px;text-align:center'>
               <div style='font-size:40px;margin-bottom:8px'>{"🔴" if pred_class==0 else "🟡" if pred_class==1 else "🟢"}</div>
               <div style='font-size:24px;font-weight:700;color:{color}'>{label}</div>
+              <div style='font-size:18px;font-weight:bold;color:#333;margin-top:5px'>GPA: {raw_score:.2f}</div>
               <div style='font-size:13px;color:#555;'>Performance Level</div>
             </div>""", unsafe_allow_html=True)
 
         with r2:
             if proba is not None:
-                st.subheader("Probability ของแต่ละ class")
+                st.subheader("Probability รายคลาส")
                 fig, ax = plt.subplots(figsize=(6, 2.5))
                 ax.barh([CLASS_LABELS[i] for i in range(3)], proba, color=[CLASS_COLORS[i] for i in range(3)], height=0.5)
                 ax.set_xlim(0, 1)
@@ -175,20 +174,20 @@ with tab1:
                 st.pyplot(fig)
                 plt.close()
             else:
-                # เอากล่องข้อความสีฟ้าออกแล้ว: แสดงเป็นข้อความสรุปสั้นๆ แทนหรือปล่อยว่าง
-                st.write("---")
-                # st.write(f"ผลการทำนายดิบจากโมเดล: ****")
+                # เอากล่องสีฟ้าออกแล้ว: แสดงเฉพาะเส้นคั่นและค่าดิบแบบเรียบง่าย
+                st.markdown("<br><br>", unsafe_allow_html=True)
+                st.write(f"**Raw Model Output:** {raw_score:.4f}")
 
         # ── Suggestions ──────────────────
         st.markdown("---")
         st.subheader("💡 คำแนะนำในการปรับปรุง")
         suggestions = []
-        if study_hours < 6: suggestions.append(("📚 เพิ่มชั่วโมงเรียน", f"ลองเพิ่มเป็น **6–8 ชม.**"))
-        if attendance < 80: suggestions.append(("🏫 เข้าเรียนให้สม่ำเสมอ", f"ควรให้มากกว่า **80%+**"))
-        if stress > 6: suggestions.append(("🧘 ลดความเครียด", f"ลองพักผ่อนหรือออกกำลังกาย"))
+        if study_hours < 6: suggestions.append(("📚 เพิ่มชั่วโมงเรียน", f"ลองเพิ่มเป็น **6–8 ชม.** ต่อวัน"))
+        if attendance < 80: suggestions.append(("🏫 เข้าเรียนให้สม่ำเสมอ", f"รักษาระดับให้เกิน **80%**"))
+        if stress > 6: suggestions.append(("🧘 จัดการความเครียด", f"หาเวลาพักผ่อนหรือปรึกษาคนรอบข้าง"))
         
         if not suggestions:
-            st.success("🌟 พฤติกรรมของคุณอยู่ในเกณฑ์ดีทุกด้าน!")
+            st.success("🌟 ยอดเยี่ยม! พฤติกรรมของคุณอยู่ในเกณฑ์ที่ดีมาก รักษาระดับนี้ไว้นะ")
         else:
             for title, desc in suggestions:
                 with st.expander(title): st.write(desc)
@@ -197,7 +196,7 @@ with tab1:
 # Tab 2: Compare Students
 # ----------------------------------------------------------
 with tab2:
-    st.header("📊 เปรียบเทียบนักศึกษา")
+    st.header("📊 เปรียบเทียบนักศึกษาหลายคน")
     default_data = pd.DataFrame({
         'study_hours': [8.0, 2.0, 10.0, 3.0],
         'attendance': [90.0, 55.0, 95.0, 60.0],
@@ -211,32 +210,36 @@ with tab2:
 
     edited_df = st.data_editor(default_data, num_rows="dynamic", use_container_width=True)
 
-    if st.button("📊 Compare", type="primary"):
+    if st.button("📊 Compare Students", type="primary"):
         results = []
         for idx, row in edited_df.iterrows():
             p_class, label, color, bg, proba, r_score = predict_class(row.to_dict())
             emoji = "🔴" if p_class == 0 else "🟡" if p_class == 1 else "🟢"
-            results.append({'Student': str(idx), 'Level': f'{emoji} {label}', 'Class': p_class})
+            results.append({
+                'Student': str(idx), 
+                'Predicted GPA': round(r_score, 2), 
+                'Level': f'{emoji} {label}'
+            })
 
         res_df = pd.DataFrame(results)
-        st.dataframe(res_df[['Student', 'GPA', 'Level']], use_container_width=True)
+        st.dataframe(res_df, use_container_width=True, hide_index=True)
 
 # ----------------------------------------------------------
 # Tab 3: Model Details
 # ----------------------------------------------------------
 with tab3:
-    st.header("ℹ️ รายละเอียด Model")
+    st.header("ℹ️ ข้อมูลทางเทคนิค")
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("📋 Metadata")
         st.json(METADATA)
     with col2:
-        st.subheader("🔑 Features ที่ใช้")
+        st.subheader("🔑 Features")
         st.write(FEATURES)
 
     if hasattr(model, 'feature_importances_'):
         st.subheader("📈 Feature Importance")
         imp_df = pd.DataFrame({'Feature': FEATURES, 'Importance': model.feature_importances_}).sort_values('Importance')
         fig, ax = plt.subplots()
-        ax.barh(imp_df['Feature'], imp_df['Importance'], color='skyblue')
+        ax.barh(imp_df['Feature'], imp_df['Importance'], color='#3B82F6')
         st.pyplot(fig)
